@@ -68,10 +68,6 @@ This project is a simple To-Do List application built with **React**. It allows 
 
 ## Getting Started
 
-### Prerequisites
-
-- **Node.js** installed on your system.
-
 ### Installation
 
 1. Clone the repository or copy the provided code.
@@ -82,15 +78,6 @@ This project is a simple To-Do List application built with **React**. It allows 
 
 - **In Browser**:
   - Open the `index.html` file directly in a web browser if using the provided standalone script with CDN links.
-- **Using React CLI**:
-  1. Install dependencies (if applicable):
-     ```bash
-     npm install
-     ```
-  2. Start the development server:
-     ```bash
-     npm start
-     ```
 
 ## Built With
 
