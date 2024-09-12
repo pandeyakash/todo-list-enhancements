@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODO List Enhancement</title>
+    <style>
+      .completed {
+        text-decoration: line-through;
+      }
+      button {
+        cursor: pointer;
+        width: 100px;
+        height: 40px;
+        margin-bottom: 20px;
+        background-color: rgb(94, 94, 154);
+        border: none;
+        font-size: 20px;
+        font-weight: 700;
+        color: aliceblue;
+        border-radius: 5px;
+      }
+
+      .todo-form {
+        background-color: aqua;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        height: 200px;
+        width: 400px;
+        margin: auto;
+        border-radius: 10px;
+        padding: 20px;
+      }
+
+      .todo-form > form > input {
+        width: 80%;
+        height: 25px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 5px;
+        padding-left: 5px;
+        font-size: 15px;
+      }
+
+      .todo-display {
+        background-color: aqua;
+        width: 400px;
+        margin: auto;
+        border-radius: 10px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .todo-display button {
+        font-size: 15px;
+        height: 30px;
+        width: 80px;
+      }
+
+      li {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const ToDoList = () => {
+      const [todos, setTodos] = React.useState([]);
+      const [newTodo, setNewTodo] = React.useState({ title: "" });
+      const [toggle, setToggle] = React.useState(true);
+
+      const handleChange = (e) => {
+        const currentTodo = {
+          id: Math.floor(Math.random() * 100000000) + 1,
+          [e.target.name]: e.target.value,
+          completed: false,
+        };
+
+        setNewTodo(currentTodo);
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        setTodos([...todos, newTodo]);
+        setNewTodo({ title: "" });
+      };
+
+      const handleStatus = (id) => {
+        setTodos(
+          todos.map((ele) => {
+            if (ele.id === id) {
+              ele.completed = !ele.completed;
+              return ele;
+            } else {
+              return ele;
+            }
+          })
+        );
+      };
+      const handleToggle = () => {
+        setToggle(!toggle);
+      };
+
+      const handleDelete = (id) => {
+        setTodos(todos.filter((ele) => ele.id !== id));
+      };
+
+      console.log(todos);
+      return (
+        <div>
+          <button className="toggle-button" onClick={handleToggle}>
+            {toggle ? "ToDo" : "Form"}
+          </button>
+          {toggle ? (
+            <div className="todo-form">
+              <h1>Enter the TODO Name</h1>
+              <form action="#" onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="Enter ToDo Name"
+                  name="title"
+                  value={newTodo.title}
+                  onChange={handleChange}
+                />
+                <button type="submit">Submit</button>
+              </form>
+            </div>
+          ) : (
+            <div className="todo-display">
+              <h1>Todo List</h1>
+              <ul>
+                {todos.map((ele) => {
+                  return (
+                    <li className={ele.completed ? "completed" : ""}>
+                      <b>{ele.title}</b>
+                      <input
+                        type="checkbox"
+                        name="completed"
+                        checked={ele.completed}
+                        onChange={() => handleStatus(ele.id)}
+                      />
+                      <button onClick={() => handleDelete(ele.id)}>
+                        Delete
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const App = () => {
+      return (
+        <>
+          <ToDoList />
+        </>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</html>
