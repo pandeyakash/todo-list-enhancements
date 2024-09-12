@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TODO List Enhancement</title>
     <style>
+      /* Styling for completed tasks, adding a line-through to signify task completion */
       .completed {
         text-decoration: line-through;
       }
+
+      /* General button styling */
       button {
         cursor: pointer;
         width: 100px;
@@ -21,6 +24,7 @@
         border-radius: 5px;
       }
 
+      /* Styling for the form used to add new TODO items */
       .todo-form {
         background-color: aqua;
         display: flex;
@@ -34,6 +38,7 @@
         padding: 20px;
       }
 
+      /* Styling for the input within the form */
       .todo-form > form > input {
         width: 80%;
         height: 25px;
@@ -44,6 +49,7 @@
         font-size: 15px;
       }
 
+      /* Styling for the section displaying the todo items */
       .todo-display {
         background-color: aqua;
         width: 400px;
@@ -55,12 +61,14 @@
         align-items: center;
       }
 
+      /* Smaller button styling within the todo list */
       .todo-display button {
         font-size: 15px;
         height: 30px;
         width: 80px;
       }
 
+      /* Styling for each todo item */
       li {
         font-size: 20px;
       }
@@ -68,108 +76,127 @@
   </head>
   <body>
     <div id="root"></div>
-  </body>
-  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
-  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script type="text/babel">
-    const ToDoList = () => {
-      const [todos, setTodos] = React.useState([]);
-      const [newTodo, setNewTodo] = React.useState({ title: "" });
-      const [toggle, setToggle] = React.useState(true);
 
-      const handleChange = (e) => {
-        const currentTodo = {
-          id: Math.floor(Math.random() * 100000000) + 1,
-          [e.target.name]: e.target.value,
-          completed: false,
+    <!-- Importing React and Babel for JSX support in the browser -->
+    <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+      // ToDoList Component: Manages the creation and display of todo items
+      const ToDoList = () => {
+        // React state for storing the list of todos and the new todo input
+        const [todos, setTodos] = React.useState([]);
+        const [newTodo, setNewTodo] = React.useState({ title: "" });
+        const [toggle, setToggle] = React.useState(true); // State to toggle between the form and todo display
+
+        // Function to handle input changes in the form, updates the newTodo state with a random ID and the title
+        const handleChange = (e) => {
+          const currentTodo = {
+            id: Math.floor(Math.random() * 100000000) + 1, // Random unique ID
+            [e.target.name]: e.target.value, // Dynamically setting the property based on the input field's name
+            completed: false, // Default todo status is not completed
+          };
+
+          setNewTodo(currentTodo); // Update the state with the new todo
         };
 
-        setNewTodo(currentTodo);
-      };
+        // Handles the form submission, adds the new todo to the todos array
+        const handleSubmit = (e) => {
+          e.preventDefault(); // Prevent page reload on form submission
+          setTodos([...todos, newTodo]); // Add the new todo to the existing list
+          setNewTodo({ title: "" }); // Clear the form after submission
+        };
 
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        setTodos([...todos, newTodo]);
-        setNewTodo({ title: "" });
-      };
+        // Toggles the completed status of a todo when the checkbox is clicked
+        const handleStatus = (id) => {
+          setTodos(
+            todos.map((ele) => {
+              if (ele.id === id) {
+                ele.completed = !ele.completed; // Toggle the completion status
+                return ele;
+              } else {
+                return ele;
+              }
+            })
+          );
+        };
 
-      const handleStatus = (id) => {
-        setTodos(
-          todos.map((ele) => {
-            if (ele.id === id) {
-              ele.completed = !ele.completed;
-              return ele;
-            } else {
-              return ele;
-            }
-          })
+        // Toggles between the form view and the todo list view
+        const handleToggle = () => {
+          setToggle(!toggle);
+        };
+
+        // Handles the deletion of a todo item
+        const handleDelete = (id) => {
+          setTodos(todos.filter((ele) => ele.id !== id)); // Filter out the todo with the given id
+        };
+
+        console.log(todos); // Logs the todos to the console for debugging
+
+        return (
+          <div>
+            {/* Button to toggle between form and todo list */}
+            <button className="toggle-button" onClick={handleToggle}>
+              {toggle ? "ToDo" : "Form"}
+            </button>
+
+            {/* Conditionally render the form or the todo list based on the toggle state */}
+            {toggle ? (
+              <div className="todo-form">
+                <h1>Enter the TODO Name</h1>
+                <form action="#" onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    placeholder="Enter ToDo Name"
+                    name="title"
+                    value={newTodo.title} // Binds the input to the newTodo state
+                    onChange={handleChange} // Calls handleChange when the input value changes
+                  />
+                  <button type="submit">Submit</button>{" "}
+                  {/* Submits the new todo */}
+                </form>
+              </div>
+            ) : (
+              <div className="todo-display">
+                <h1>Todo List</h1>
+                <ul>
+                  {/* Map through todos and display each one */}
+                  {todos.map((ele) => {
+                    return (
+                      <li className={ele.completed ? "completed" : ""}>
+                        <b>{ele.title}</b>
+                        <input
+                          type="checkbox"
+                          name="completed"
+                          checked={ele.completed}
+                          onChange={() => handleStatus(ele.id)} // Handle toggling completion status
+                        />
+                        <button onClick={() => handleDelete(ele.id)}>
+                          Delete
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+          </div>
         );
       };
-      const handleToggle = () => {
-        setToggle(!toggle);
+
+      // App Component: The main entry point for rendering the ToDoList component
+      const App = () => {
+        return (
+          <>
+            <ToDoList />
+          </>
+        );
       };
 
-      const handleDelete = (id) => {
-        setTodos(todos.filter((ele) => ele.id !== id));
-      };
-
-      console.log(todos);
-      return (
-        <div>
-          <button className="toggle-button" onClick={handleToggle}>
-            {toggle ? "ToDo" : "Form"}
-          </button>
-          {toggle ? (
-            <div className="todo-form">
-              <h1>Enter the TODO Name</h1>
-              <form action="#" onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="Enter ToDo Name"
-                  name="title"
-                  value={newTodo.title}
-                  onChange={handleChange}
-                />
-                <button type="submit">Submit</button>
-              </form>
-            </div>
-          ) : (
-            <div className="todo-display">
-              <h1>Todo List</h1>
-              <ul>
-                {todos.map((ele) => {
-                  return (
-                    <li className={ele.completed ? "completed" : ""}>
-                      <b>{ele.title}</b>
-                      <input
-                        type="checkbox"
-                        name="completed"
-                        checked={ele.completed}
-                        onChange={() => handleStatus(ele.id)}
-                      />
-                      <button onClick={() => handleDelete(ele.id)}>
-                        Delete
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
-        </div>
-      );
-    };
-
-    const App = () => {
-      return (
-        <>
-          <ToDoList />
-        </>
-      );
-    };
-
-    const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App />);
-  </script>
+      // Render the App component inside the root div
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
 </html>
